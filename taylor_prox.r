@@ -1,6 +1,6 @@
-min_dist <- function(seq, a, b) # for each A, how close is the next B
+min_dist <- function(seq, a, b, sep=' ') # for each A, how close is the next B
 {
-  splitseq = strsplit(seq, ' ')[[1]]
+  splitseq = strsplit(seq, sep)[[1]]
   a_pos = which(splitseq == a)
   b_pos = which(splitseq == b)
   distances = numeric()
@@ -23,11 +23,11 @@ min_dist <- function(seq, a, b) # for each A, how close is the next B
 return (distances)
 }
 
-proximity <- function(seq, a, b, w=1)
+proximity <- function(seq, a, b, w=1, sep=' ')
 {
 
-  splitseq = strsplit(seq, ' ')[[1]]
-  min_dists = min_dist(seq, a, b)
+  splitseq = strsplit(seq, sep)[[1]]
+  min_dists = min_dist(seq, a, b, sep)
   
   if (length(min_dists) == 0)
   {
@@ -46,10 +46,10 @@ proximity <- function(seq, a, b, w=1)
 }
 
 
-prox_matrix <- function(seq, weight=1) # calculate proximity matrix for a single sequence
+prox_matrix <- function(seq, weight=1, sep=' ') # calculate proximity matrix for a single sequence
 {
-  splitseq = strsplit(seq, ' ')[[1]]
-  eventtypes = names(table(strsplit(seq, ' ')[[1]]))
+  splitseq = strsplit(seq, sep)[[1]]
+  eventtypes = names(table(splitseq))
   
   pmatrix = matrix(0, nrow = length(eventtypes), ncol = length(eventtypes), dimnames = list(eventtypes, eventtypes)) # empty trans freq matrix
   
@@ -57,7 +57,7 @@ prox_matrix <- function(seq, weight=1) # calculate proximity matrix for a single
   {
     for (c in 1:length(eventtypes))
     {
-      pmatrix[r,c] = proximity(seq, eventtypes[r], eventtypes[c], weight)
+      pmatrix[r,c] = proximity(seq, eventtypes[r], eventtypes[c], weight, sep)
     }
   }
   return(pmatrix)
