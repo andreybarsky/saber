@@ -1,7 +1,5 @@
 ########## main function:
 
-### to do: combine LFE and cluster membership variable
-
 source("./saber_input.r")
 source("./saber_descriptives.r")
 source("./saber_frequencies.r")
@@ -44,6 +42,8 @@ saber <- function(data=NULL, # input data
   # process the input data:
   seqvec = file_to_seqvec(data, datatype, control$seq_sep, control$event_sep)
   
+  saber_clusters = list() # initialise empty list of cluster memberships
+  
   if (control$terminals) # if you want explicit START and END events, we add those here
   {
     seqvec = add_terminals(seqvec)
@@ -58,6 +58,7 @@ saber <- function(data=NULL, # input data
   {
     lfes = get_lfes(seqvec, control)
     seqvec = collapse_lfes(seqvec, lfes)
+    saber_clusters$LFE = lfes
   }
   
   # perform hierarchical clustering if asked for:
@@ -66,13 +67,12 @@ saber <- function(data=NULL, # input data
     par(mfrow=c(1,2))
     cluster_obj = saber_clust(seqvec, control)
     seqvec = cluster_obj$new_input
-    saber_clusters = cluster_obj$clusters
+    saber_clusters = append(saber_clusters, cluster_obj$clusters)
     event_cor = cluster_obj$event_cor
   }
   else
   {
     par(mfrow=c(1,1))
-    saber_clusters = NULL
     event_cor = NULL
   }
   
