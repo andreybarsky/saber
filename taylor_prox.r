@@ -63,10 +63,10 @@ prox_matrix <- function(seq, weight=1, sep=' ') # calculate proximity matrix for
   return(pmatrix)
 }
 
-exp_prox <- function(seq, n) # calculate expected proximity matrix by resampling sequences many times
+exp_prox <- function(seq, n, sep=' ') # calculate expected proximity matrix by resampling sequences many times
 {
-  splitseq = strsplit(seq, ' ')[[1]]
-  eventtypes = names(table(strsplit(seq, ' ')[[1]]))
+  splitseq = strsplit(seq, sep)[[1]]
+  eventtypes = names(table(strsplit(seq, sep)[[1]]))
   
   # empty matrix:
   exp_matrix = matrix(0, 
@@ -76,7 +76,7 @@ exp_prox <- function(seq, n) # calculate expected proximity matrix by resampling
   
   for (i in 1:n)
   {
-    new_matrix = prox_matrix(paste(sample(splitseq), collapse=' '))
+    new_matrix = prox_matrix(paste(sample(splitseq), collapse=sep), sep=sep)
     new_matrix[which(is.na(new_matrix))] = 0 # replace NAs with 0 
     
     exp_matrix = exp_matrix + new_matrix
