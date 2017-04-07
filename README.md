@@ -1,5 +1,5 @@
 saber - Sequence Analysis of Behavioural Events in R
-version 1.1 - 30th Oct 2016
+version 1.3 - 19th March 2017
 by Andrey Barsky
 andreybarsky@gmail.com
 
@@ -15,6 +15,8 @@ Simply running saber() with no arguments will bring up a file select prompt. If
 you select your sequence data (as plain text, csv, or excel format) it should run
 fine in many cases with the defaults. However, it is advised you tune parameters
 according to your specific data.
+
+It is recommended you save the output of this program to a variable. 
 
 Here are the default arguments, and an explanation of each one:
 
@@ -129,6 +131,11 @@ events belong to which clusters, and an 'event_cor' variable that shows the corr
 matrix.
 By default, saber outputs a plot that shows the dendrogram and the cut height.
 
+  structural_events: With regard to the clustering capability above, there are certain
+events you may not want to be folded into clusters (because it doesn't make sense), 
+likely to be 'structural events' such as START, END, or whatever other break points you include in your data. By default, this is c('START', 'END'), although you can provide a
+different character vector to other structural events should you need to. 
+
   n_recombine: By default, saber models the input data as a first-order Markov chain,
 where each event's probability is based only on the preceding event (at a distance
 determined by the lag parameter). In principle, higher-order dependencies can be
@@ -157,14 +164,34 @@ hierarchical clustering, shows observed and residual transition matrices in the
 viewer, and outputs the notably high frequency transitions to console. Set this to
 TRUE to suppress all of those.
 
+###################
+
+The output is a list object of class 'saber'. This class has a plot method. Simply run the
+plot() function on your output object and you should get an automatically generated
+sequence map. This plot method takes the following arguments:
+
+  node_labels: If TRUE, labels the graph nodes with event names parsed from the data.
+Default is TRUE.
+
+  weights: Parameter to control how weights (residuals) are represented on the graph. If
+this is 'labels', the residuals are drawn over the arrows as numeric amounts. If this is
+'width', then the width of each edge is scaled to the residual values in the adjacency
+matrix. If this is NA, then residuals are not displayed. Default is 'labels'.
+
+  edge_label_size: Controls the text size of residual labels. Only applies if weights is
+set to 'labels'. Default is 3.
+
+
+
 
 Values
 
-The output is a list object of class 'saber', with the following attributes:
+The 'saber' object has the following attributes:
 
-$input: The original input that was fed to the main saber function.
+$input: How the input was parsed into a character vector of distinct sequences.
 
-$seqdata: How the input was parsed into a character vector of distinct sequences.
+$seqdata: The above input data after processing (with LFE collapsing, clustering etc.);
+what the residual matrix was calculated based on. 
 
 $alphabet: A table of the unique event codes encountered and their frequencies.
 
@@ -174,11 +201,15 @@ $expected: Expected frequency matrix of event transitions.
 
 $residuals: Matrix of event transition residuals.
 
+$adjacency: An adjacency matrix, used for graph plotting. Same as the residual matrix,
+but with zeroes for all values below the critical residual, given below.
+
 $critical_residual: The critical residual value for notability, either calculated
 by default or supplied by user.
 
 $event_cor: If clustering was performed, these are the correlations between event codes.
 
-$clusters: If clustering was performed, these are cluster memberships.
+$clusters: If clustering was performed, these are cluster memberships. LFE membership is
+included here as well. 
 
 $hft: A data frame of high frequency transitions, ordered by descending residual values.
