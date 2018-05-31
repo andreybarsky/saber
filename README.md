@@ -11,6 +11,8 @@ to output an R object containing observed and expected frequencies of event
 transitions, frequency residuals, and a summary of transitions that occur notably
 more often than expected.
 
+Just source saber_full_1.3.r to get started.
+
 Simply running saber() with no arguments will bring up a file select prompt. If
 you select your sequence data (as plain text, csv, or excel format) it should run
 fine in many cases with the defaults. However, it is advised you tune parameters
